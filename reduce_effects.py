@@ -31,7 +31,8 @@ def load_config(config_path="config.json"):
             "custom_css": "",
             "font_size": "18px",  # Tamanho maior de fonte
             "high_contrast": True,  # Ativar o alto contraste
-            "animations_disabled": True  # Desabilitar animações e transições
+            "animations_disabled": True,  # Desabilitar animações e transições
+            "highlight_buttons": True  # Destacar botões e links com alto contraste
         }
 
 def generate_css(config):
@@ -52,6 +53,7 @@ def generate_css(config):
     font_size = config.get("font_size", "18px")  # Tamanho de fonte
     high_contrast = config.get("high_contrast", False)  # Contraste alto
     animations_disabled = config.get("animations_disabled", True)  # Desabilitar animações
+    highlight_buttons = config.get("highlight_buttons", False)  # Destacar botões e links
 
     # CSS base
     base_css = "* { animation: none !important; transition: none !important; box-shadow: none !important; }" if animations_disabled else ""
@@ -72,6 +74,28 @@ def generate_css(config):
     
     if level == "high":
         base_css += " * { font-family: Arial, sans-serif !important; }"  # Fonte simples e sem distrações
+
+    # Destacar botões, links e elementos interativos
+    if highlight_buttons:
+        base_css += """
+            button, a, input[type="button"], input[type="submit"], input[type="reset"] {
+                background-color: #FFFFFF !important;
+                color: #000000 !important;
+                border: 2px solid #000000 !important;
+                padding: 10px 20px !important;
+                font-size: 16px !important;
+                text-decoration: none !important;
+                cursor: pointer !important;
+                border-radius: 5px;
+            }
+            button:hover, a:hover, input[type="button"]:hover, input[type="submit"]:hover, input[type="reset"]:hover {
+                background-color: #000000 !important;
+                color: #FFFFFF !important;
+            }
+            button:focus, a:focus, input[type="button"]:focus, input[type="submit"]:focus, input[type="reset"]:focus {
+                outline: 3px solid #FF0000 !important;  /* Destaque em vermelho quando o botão ou link estiver em foco */
+            }
+        """
     
     return f"{base_css}\n{body_css}\n{custom_css}"
 

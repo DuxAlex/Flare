@@ -1,10 +1,11 @@
 {
     "level": "high",  
-    "dark_mode": true,  
+    "dark_mode": true,
     "remove_videos": true,  
-    "remove_images": true,  
+    "remove_images": true, 
     "custom_css": "",
     "font_size": "18px",  
     "high_contrast": true,  
-    "animations_disabled": true  
+    "animations_disabled": true,  
+    "highlight_buttons": true  
 }
