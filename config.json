@@ -1,0 +1,6 @@
+{
+    "level": "high",
+    "dark_mode": true,
+    "remove_videos": true,
+    "custom_css": "* { border: 1px solid red !important; }"
+}
