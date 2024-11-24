@@ -1,6 +1,10 @@
 {
-    "level": "high",
-    "dark_mode": true,
-    "remove_videos": true,
-    "custom_css": "* { border: 1px solid red !important; }"
+    "level": "high",  
+    "dark_mode": true,  
+    "remove_videos": true,  
+    "remove_images": true,  
+    "custom_css": "",
+    "font_size": "18px",  
+    "high_contrast": true,  
+    "animations_disabled": true  
 }

@@ -1,6 +1,5 @@
 import json
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 import time
 
@@ -25,10 +24,14 @@ def load_config(config_path="config.json"):
     except FileNotFoundError:
         print("Arquivo de configuração não encontrado. Usando padrões.")
         return {
-            "level": "medium",
-            "dark_mode": False,
-            "remove_videos": False,
-            "custom_css": ""
+            "level": "high",  # Nível mais alto para ajustes visuais fortes
+            "dark_mode": True,  # Modo escuro para reduzir a luz excessiva
+            "remove_videos": True,  # Remover vídeos que são distrações visuais
+            "remove_images": True,  # Remover imagens
+            "custom_css": "",
+            "font_size": "18px",  # Tamanho maior de fonte
+            "high_contrast": True,  # Ativar o alto contraste
+            "animations_disabled": True  # Desabilitar animações e transições
         }
 
 def generate_css(config):
@@ -41,24 +44,35 @@ def generate_css(config):
     Returns:
         str: CSS gerado.
     """
-    level = config.get("level", "medium")
+    level = config.get("level", "high")
     dark_mode = config.get("dark_mode", False)
     remove_videos = config.get("remove_videos", False)
+    remove_images = config.get("remove_images", False)
     custom_css = config.get("custom_css", "")
+    font_size = config.get("font_size", "18px")  # Tamanho de fonte
+    high_contrast = config.get("high_contrast", False)  # Contraste alto
+    animations_disabled = config.get("animations_disabled", True)  # Desabilitar animações
 
-    base_css = "* { animation: none !important; transition: none !important; box-shadow: none !important; }"
-    body_css = "body { background-color: #ffffff !important; color: #000000 !important; }"
+    # CSS base
+    base_css = "* { animation: none !important; transition: none !important; box-shadow: none !important; }" if animations_disabled else ""
+    body_css = f"body {{ background-color: #ffffff !important; color: #000000 !important; font-size: {font_size} !important; }}"
 
-    if level == "high":
-        base_css += " img, video { display: none !important; }"
-        if dark_mode:
-            body_css = "body { background-color: #222222 !important; color: #E0E0E0 !important; }"
-    elif level == "medium" and dark_mode:
-        body_css = "body { background-color: #333333 !important; color: #E0E0E0 !important; }"
-    
+    # Se o alto contraste for ativado
+    if high_contrast:
+        base_css += " body { background-color: #000000 !important; color: #FFFFFF !important; }"  # Fundo preto e texto branco
+        body_css += " * { color: #FFFFFF !important; background-color: #000000 !important; }"  # Garantir que todos os elementos sigam a regra
+
+    if remove_images:
+        base_css += " img { display: none !important; }"  # Remover imagens
     if remove_videos:
-        base_css += " video { display: none !important; }"
-
+        base_css += " video { display: none !important; }"  # Remover vídeos
+    
+    if dark_mode:
+        body_css = "body { background-color: #222222 !important; color: #E0E0E0 !important; }"
+    
+    if level == "high":
+        base_css += " * { font-family: Arial, sans-serif !important; }"  # Fonte simples e sem distrações
+    
     return f"{base_css}\n{body_css}\n{custom_css}"
 
 def apply_visual_adjustments(url, config):
@@ -70,7 +84,7 @@ def apply_visual_adjustments(url, config):
         config (dict): Configurações para os ajustes visuais.
     """
     print(f"Iniciando ajustes visuais para o site: {url}")
-    print(f"Nível de ajustes: {config.get('level', 'medium').upper()}")
+    print(f"Nível de ajustes: {config.get('level', 'high').upper()}")
 
     # Inicializar o driver
     service = Service(driver_path)
@@ -91,12 +105,15 @@ def apply_visual_adjustments(url, config):
     driver.execute_script(script)
     print("Ajustes visuais aplicados.")
 
-    # Aguarda visualização
-    time.sleep(10)
-
-    # para fechar o navegador basta descomentar as duas linhas abaixo
-    #driver.quit()
-    #print("Navegador fechado.")
+    # Manter o navegador aberto até o usuário pressionar uma tecla para sair
+    while True:
+        user_input = input("Digite 's' para sair e fechar o navegador: ").strip().lower()
+        if user_input == 's':
+            print("Fechando o navegador...")
+            driver.quit()
+            break
+        else:
+            print("Comando não reconhecido. O navegador continuará aberto.")
 
 # Carregar configurações
 config = load_config()
